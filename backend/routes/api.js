@@ -41,7 +41,7 @@ router.post('/users', async (req, res) => {
     const newUser = new User(req.body);
     await newUser.save();
     const users = await User.find({}, '-password');
-    req.app.get('pusher').trigger('alpha-one', 'users_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'users_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) {
     res.json({ success: false, message: err.message });
@@ -52,7 +52,7 @@ router.delete('/users/:id', async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
     const users = await User.find({}, '-password');
-    req.app.get('pusher').trigger('alpha-one', 'users_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'users_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) {
     res.json({ success: false, message: err.message });
@@ -63,7 +63,7 @@ router.put('/users/:id/role', async (req, res) => {
   try {
     await User.findByIdAndUpdate(req.params.id, { role: req.body.role });
     const users = await User.find({}, '-password');
-    req.app.get('pusher').trigger('alpha-one', 'users_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'users_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) {
     res.json({ success: false, message: err.message });
@@ -79,7 +79,7 @@ router.post('/sizesets', async (req, res) => {
   try {
     await SizeSet.create(req.body);
     const sizes = await SizeSet.find();
-    req.app.get('pusher').trigger('alpha-one', 'sizesets_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'sizesets_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) { res.json({ success: false, message: err.message }); }
 });
@@ -87,7 +87,7 @@ router.put('/sizesets/:id', async (req, res) => {
   try {
     await SizeSet.findByIdAndUpdate(req.params.id, req.body.update);
     const sizes = await SizeSet.find();
-    req.app.get('pusher').trigger('alpha-one', 'sizesets_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'sizesets_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) { res.json({ success: false, message: err.message }); }
 });
@@ -95,7 +95,7 @@ router.delete('/sizesets/:id', async (req, res) => {
   try {
     await SizeSet.findByIdAndDelete(req.params.id);
     const sizes = await SizeSet.find();
-    req.app.get('pusher').trigger('alpha-one', 'sizesets_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'sizesets_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) { res.json({ success: false, message: err.message }); }
 });
@@ -109,7 +109,7 @@ router.post('/cities', async (req, res) => {
   try {
     await City.create(req.body);
     const cities = await City.find();
-    req.app.get('pusher').trigger('alpha-one', 'cities_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'cities_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) { res.json({ success: false, message: err.message }); }
 });
@@ -117,7 +117,7 @@ router.put('/cities/:id', async (req, res) => {
   try {
     await City.findByIdAndUpdate(req.params.id, req.body.update);
     const cities = await City.find();
-    req.app.get('pusher').trigger('alpha-one', 'cities_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'cities_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) { res.json({ success: false, message: err.message }); }
 });
@@ -125,7 +125,7 @@ router.delete('/cities/:id', async (req, res) => {
   try {
     await City.findByIdAndDelete(req.params.id);
     const cities = await City.find();
-    req.app.get('pusher').trigger('alpha-one', 'cities_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'cities_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) { res.json({ success: false, message: err.message }); }
 });
@@ -139,7 +139,7 @@ router.post('/parties', async (req, res) => {
   try {
     await Party.create(req.body);
     const parties = await Party.find().populate('city');
-    req.app.get('pusher').trigger('alpha-one', 'parties_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'parties_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) { res.json({ success: false, message: err.message }); }
 });
@@ -147,7 +147,7 @@ router.put('/parties/:id', async (req, res) => {
   try {
     await Party.findByIdAndUpdate(req.params.id, req.body.update);
     const parties = await Party.find().populate('city');
-    req.app.get('pusher').trigger('alpha-one', 'parties_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'parties_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) { res.json({ success: false, message: err.message }); }
 });
@@ -155,7 +155,7 @@ router.delete('/parties/:id', async (req, res) => {
   try {
     await Party.findByIdAndDelete(req.params.id);
     const parties = await Party.find().populate('city');
-    req.app.get('pusher').trigger('alpha-one', 'parties_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'parties_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) { res.json({ success: false, message: err.message }); }
 });
@@ -175,7 +175,7 @@ router.post('/stock', async (req, res) => {
       await Stock.create(req.body);
     }
     const stock = await Stock.find().populate('sizeSet');
-    req.app.get('pusher').trigger('alpha-one', 'stock_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'stock_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) { res.json({ success: false, message: err.message }); }
 });
@@ -183,7 +183,7 @@ router.put('/stock/:id', async (req, res) => {
   try {
     await Stock.findByIdAndUpdate(req.params.id, req.body.update);
     const stock = await Stock.find().populate('sizeSet');
-    req.app.get('pusher').trigger('alpha-one', 'stock_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'stock_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) { res.json({ success: false, message: err.message }); }
 });
@@ -191,7 +191,7 @@ router.delete('/stock/:id', async (req, res) => {
   try {
     await Stock.findByIdAndDelete(req.params.id);
     const stock = await Stock.find().populate('sizeSet');
-    req.app.get('pusher').trigger('alpha-one', 'stock_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'stock_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) { res.json({ success: false, message: err.message }); }
 });
@@ -221,8 +221,8 @@ router.post('/bills', async (req, res) => {
     }).populate('items.stock').sort({ createdAt: -1 });
     const stock = await Stock.find().populate('sizeSet');
     
-    req.app.get('pusher').trigger('alpha-one', 'bills_updated', { timestamp: Date.now() });
-    req.app.get('pusher').trigger('alpha-one', 'stock_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'bills_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'stock_updated', { timestamp: Date.now() });
     
     res.json({ success: true });
   } catch (err) {
@@ -236,7 +236,7 @@ router.put('/bills/:id/status', async (req, res) => {
       path: 'party',
       populate: { path: 'city' }
     }).populate('items.stock').sort({ createdAt: -1 });
-    req.app.get('pusher').trigger('alpha-one', 'bills_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'bills_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) { res.json({ success: false, message: err.message }); }
 });
@@ -260,8 +260,8 @@ router.delete('/bills/:id', async (req, res) => {
     }).populate('items.stock').sort({ createdAt: -1 });
     const stocks = await Stock.find().populate('sizeSet');
     
-    req.app.get('pusher').trigger('alpha-one', 'bills_updated', { timestamp: Date.now() });
-    req.app.get('pusher').trigger('alpha-one', 'stock_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'bills_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'stock_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) { res.json({ success: false, message: err.message }); }
 });
@@ -281,7 +281,7 @@ router.post('/payments', async (req, res) => {
       path: 'party',
       populate: { path: 'city' }
     }).sort({ createdAt: -1 });
-    req.app.get('pusher').trigger('alpha-one', 'payments_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'payments_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) { res.json({ success: false, message: err.message }); }
 });
@@ -292,7 +292,7 @@ router.delete('/payments/:id', async (req, res) => {
       path: 'party',
       populate: { path: 'city' }
     }).sort({ createdAt: -1 });
-    req.app.get('pusher').trigger('alpha-one', 'payments_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'payments_updated', { timestamp: Date.now() });
     res.json({ success: true });
   } catch (err) { res.json({ success: false, message: err.message }); }
 });
@@ -367,7 +367,7 @@ router.post('/goods-return', async (req, res) => {
     });
     
     const stock = await Stock.find().populate('sizeSet');
-    req.app.get('pusher').trigger('alpha-one', 'stock_updated', { timestamp: Date.now() });
+    await req.app.get('pusher').trigger('alpha-one', 'stock_updated', { timestamp: Date.now() });
     res.json({ success: true, totalAmount });
   } catch (err) { res.json({ success: false, message: err.message }); }
 });
