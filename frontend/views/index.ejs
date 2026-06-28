@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alpha One Garments</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/loader.css">
+</head>
+<body>
+  <!-- LOADING SCREEN -->
+  <div id="loading-screen" class="loader-container active">
+    <div class="loader-animation">
+      <div class="box"></div>
+      <div class="garment"></div>
+    </div>
+  </div>
+
+  <!-- LOGIN SCREEN -->
+  <section id="login-section" class="screen active">
+    <div class="login-box">
+      <h2>Alpha One Garments Login</h2>
+      <form id="login-form">
+        <input type="email" id="login-id" placeholder="User ID" required>
+        <input type="password" id="login-password" placeholder="Password" required>
+        <button type="submit">Enter</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- MAIN APP CONTAINER -->
+  <div id="app-container" class="hidden">
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+      <h2>Alpha One Garments</h2>
+      <button id="mobile-menu-btn" class="secondary-btn">☰ Menu</button>
+    </div>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <nav class="sidebar" id="sidebar">
+      <h2 class="desktop-only">Alpha One Garments</h2>
+      <p id="user-role-display"></p>
+      <ul>
+        <li><a href="#dashboard" class="nav-link">Dashboard</a></li>
+        <li><a href="#make-bill" class="nav-link">Generate Bill</a></li>
+        <li><a href="#bills-list" class="nav-link">Bills List</a></li>
+        <li><a href="#payments" class="nav-link">Payments</a></li>
+        <li class="nav-group-title">Inventories</li>
+        <li><a href="#stock-management" class="nav-link">Design & Stock</a></li>
+        <li class="nav-group-title">Registries</li>
+        <li><a href="#size-registry" class="nav-link">Size Registry</a></li>
+        <li><a href="#city-registry" class="nav-link">City Registry</a></li>
+        <li><a href="#party-registry" class="nav-link">Party Registry</a></li>
+        <li class="nav-group-title">Goods Return</li>
+        <li><a href="#gr-module" class="nav-link">GR Module (Returns)</a></li>
+        <li class="nav-group-title">Reports</li>
+        <li><a href="#party-ledger" class="nav-link">Party Summary / Ledger</a></li>
+        <li class="admin-only"><a href="#user-management" class="nav-link">User Management</a></li>
+      </ul>
+      <button id="logout-btn">Logout</button>
+    </nav>
+
+    <main class="content">
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="page active">
+        <div class="header">
+          <h1>Dashboard</h1>
+          <div class="stat-box">Pending Bills: <span id="pending-bills-counter">0</span></div>
+        </div>
+        <div class="quick-actions">
+          <button class="action-btn" onclick="app.navigate('stock-management')">[+ Add Design & Stock]</button>
+          <button class="action-btn" onclick="app.navigate('gr-module')">[+ GR (Return)]</button>
+          <button class="action-btn" onclick="app.navigate('party-registry')">[+ Create New Party]</button>
+          <button class="action-btn primary" onclick="app.navigate('make-bill')">[+ Generate Bill]</button>
+          <button class="action-btn primary" style="grid-column: 1 / -1; background: var(--secondary);" onclick="app.generateBalancePdf()">Generate All Parties Remaining Balance's pdf</button>
+        </div>
+        
+        <div style="margin-top: 30px;">
+          <h2>Recent Pending Bills</h2>
+          <div class="table-container">
+            <table class="data-table" id="dashboard-pending-bills-table">
+              <thead>
+                <tr>
+                  <th>BILL NO</th>
+                  <th>DATE</th>
+                  <th>PARTY</th>
+                  <th>NET TOTAL</th>
+                  <th>ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SIZE REGISTRY -->
+      <section id="size-registry" class="page hidden">
+        <h1>Size Registry</h1>
+        <form id="size-form" class="card">
+          <input type="text" id="size-name" placeholder="Size Set Name (e.g., S-M-L)" required>
+          <input type="number" id="size-pieces" placeholder="Pieces Per Set (e.g., 3)" required>
+          <button type="submit">Add Size Set</button>
+        </form>
+        <div class="table-container">
+          <table id="sizes-table">
+            <thead><tr><th>Name</th><th>Pieces Per Set</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CITY REGISTRY -->
+      <section id="city-registry" class="page hidden">
+        <h1>City Registry</h1>
+        <form id="city-form" class="card">
+          <input type="text" id="city-name" placeholder="City Name" required>
+          <button type="submit">Add City</button>
+        </form>
+        <div class="table-container">
+          <table id="cities-table">
+            <thead><tr><th>City Name</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PARTY REGISTRY -->
+      <section id="party-registry" class="page hidden">
+        <h1>Party Registry</h1>
+        <form id="party-form" class="card">
+          <input type="text" id="party-name" placeholder="Party Name" required>
+          <select id="party-city" required><option value="">Select City</option></select>
+          <input type="text" id="party-address" placeholder="Specific Market/Address (Optional)">
+          <input type="hidden" id="party-type" value="Normal">
+          <button type="submit">Register Party</button>
+        </form>
+        <div class="table-container">
+          <table id="parties-table">
+            <thead><tr><th>Party Name</th><th>City</th><th>Market/Address</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+      
+      <!-- REMOVED GR PARTY REGISTRY (Moved to GR Module) -->
+
+      <!-- DESIGN & STOCK MANAGEMENT -->
+      <section id="stock-management" class="page hidden">
+        <h1>Design & Stock Management</h1>
+        <form id="stock-form" class="card">
+          <input type="text" id="stock-design-no" placeholder="Design No" required>
+          <input type="text" id="stock-design-name" placeholder="Design Name" required>
+          <select id="stock-size-set" required><option value="">Select Size Set</option></select>
+          <input type="number" id="stock-price" placeholder="Per Piece Price" required>
+          <div class="stock-entry-group">
+            <input type="number" id="stock-quantity" placeholder="Quantity" required>
+            <select id="stock-unit" required>
+              <option value="pieces">Pieces</option>
+              <option value="dozens">Dozens</option>
+            </select>
+          </div>
+          <div id="stock-live-calc" class="live-calc">Live Calculation: 0 Sets / 0 Dozens / 0 Remaining Pieces</div>
+          <button type="submit">Add Stock</button>
+        </form>
+        <div class="table-container">
+          <table id="stock-table">
+            <thead><tr><th>Design No</th><th>Design Name</th><th>Size Set</th><th>Total Pieces</th><th>Price/Piece</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+      
+      <!-- UNIFIED GR MODULE -->
+      <section id="gr-module" class="page hidden">
+        <h1>Goods Return (GR) Module</h1>
+        <div class="quick-actions" style="margin-bottom: 20px;">
+          <button class="action-btn" onclick="app.navigate('gr-party-page')" style="background: var(--secondary);">GR Party Registry</button>
+          <button class="action-btn" onclick="app.navigate('gr-stock-page')" style="background: var(--danger);">GR Stock Entry</button>
+          <button class="action-btn primary" onclick="app.navigate('gr-bill-page')">Generate GR Bill</button>
+          <button class="action-btn" onclick="app.navigate('gr-return-from-party')" style="grid-column: 1 / -1; background: #f59e0b; color: white;">[+ Add Return from Party]</button>
+        </div>
+      </section>
+
+      <!-- GR PARTY PAGE -->
+      <section id="gr-party-page" class="page hidden">
+        <h1>GR Party Registry</h1>
+        <form id="gr-party-form" class="card">
+          <input type="text" id="gr-party-name" placeholder="GR Party Name" required>
+          <select id="gr-party-city" required><option value="">Select City</option></select>
+          <input type="text" id="gr-party-address" placeholder="Specific Market/Address (Optional)">
+          <input type="hidden" id="gr-party-type" value="GR">
+          <button type="submit" style="background: var(--secondary);">Register GR Party</button>
+        </form>
+        <div class="table-container">
+          <table id="gr-parties-table">
+            <thead><tr><th>Party Name</th><th>City</th><th>Market/Address</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- GR RETURN FROM PARTY PAGE -->
+      <section id="gr-return-from-party" class="page hidden">
+        <h1>Return Goods from Party</h1>
+        <p style="margin-bottom: 20px; color: #666;">This will deduct the returned amount from the party's balance and add the goods to GR Stock.</p>
+        <form id="gr-return-form" class="card">
+          <div style="position:relative; margin-bottom: 15px;">
+            <input type="text" id="gr-return-party-search" placeholder="Search Party..." autocomplete="off" required>
+            <input type="hidden" id="gr-return-party" required>
+            <ul id="gr-return-party-dropdown" class="autocomplete-list"></ul>
+          </div>
+          
+          <div id="gr-return-items-container" style="border: 1px solid #eee; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+            <div class="bill-item-row" style="display: grid; grid-template-columns: 2fr 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px;">
+              <select class="item-design gr-return-design" required><option value="">Select Design</option></select>
+              <input type="number" class="item-pieces" placeholder="Pieces" required>
+            </div>
+          </div>
+          <button type="button" class="secondary-btn" id="gr-return-add-design-btn" style="margin-bottom: 15px;">+ Add Another Design</button>
+          
+          <button type="submit" style="background: #f59e0b;">Submit Return</button>
+        </form>
+      </section>
+
+      <!-- GR STOCK PAGE -->
+      <section id="gr-stock-page" class="page hidden">
+        <h1>GR Stock Entry</h1>
+        <form id="gr-stock-form" class="card">
+          <input type="text" id="gr-stock-design-no" placeholder="Design No" required>
+          <input type="text" id="gr-stock-design-name" placeholder="Design Name" required>
+          <select id="gr-stock-size-set" required><option value="">Select Size Set</option></select>
+          <input type="number" id="gr-stock-price" placeholder="Per Piece Price" required>
+          <div class="stock-entry-group">
+            <input type="number" id="gr-stock-quantity" placeholder="Quantity (Pieces)" required>
+          </div>
+          <div id="gr-stock-live-calc" class="live-calc">Live Calculation: 0 Sets / 0 Dozens / 0 Pieces / 0 Remaining Pieces</div>
+          <button type="submit" class="danger-btn">Add GR Stock</button>
+        </form>
+        <div class="table-container">
+          <table id="gr-stock-table">
+            <thead><tr><th>Design No</th><th>Design Name</th><th>Size Set</th><th>Total Pieces</th><th>Price/Piece</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- GR BILL PAGE -->
+      <section id="gr-bill-page" class="page hidden">
+        <h1>Generate GR Bill</h1>
+        <form id="gr-bill-form" class="card bill-card">
+          <div class="party-select-group" style="position: relative;">
+            <input type="text" id="gr-bill-party-search" placeholder="Search GR Party..." autocomplete="off">
+            <input type="hidden" id="gr-bill-party" required>
+            <ul id="gr-bill-party-dropdown" class="autocomplete-list"></ul>
+            <div id="gr-selected-party-display" class="highlight-display" style="display:none;"></div>
+          </div>
+          <div id="gr-bill-items-container"></div>
+          <button type="button" id="gr-add-design-btn" class="secondary-btn">[Add GR Design]</button>
+          <div class="discount-group">
+            <label>Discount (%)</label>
+            <input type="number" id="gr-bill-discount" placeholder="Enter discount %" value="0">
+          </div>
+          <div class="bill-actions">
+            <button type="button" class="btn-save" id="gr-btn-save-only">[Save GR Only]</button>
+            <button type="button" class="btn-print" id="gr-btn-save-print">[Save & Print GR Bill]</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- GENERATE BILL -->
+      <section id="make-bill" class="page hidden">
+        <h1>Generate Bill</h1>
+        <form id="bill-form" class="card bill-card">
+          <div class="party-select-group" style="position: relative;">
+            <input type="text" id="bill-party-search" placeholder="Search Party..." autocomplete="off">
+            <input type="hidden" id="bill-party" required>
+            <ul id="bill-party-dropdown" class="autocomplete-list"></ul>
+            <div id="selected-party-display" class="highlight-display" style="display:none;"></div>
+          </div>
+          
+          <div id="bill-items-container">
+            <!-- Rows will be added dynamically here -->
+          </div>
+          <button type="button" id="add-design-btn" class="secondary-btn">[Add Design]</button>
+
+          <div class="discount-group">
+            <label>Discount (%)</label>
+            <input type="number" id="bill-discount" placeholder="e.g. 12" value="0">
+          </div>
+          
+          <div class="bill-actions">
+            <button type="button" class="btn-save" id="btn-save-only">[Save Only]</button>
+            <button type="button" class="btn-print" id="btn-save-print">[Save & Print Bill]</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- BILLS LIST -->
+      <section id="bills-list" class="page hidden">
+        <h1>Bills List</h1>
+        <div class="filters">
+          <input type="number" id="search-bill-no" placeholder="Search Bill No...">
+          <select id="search-bill-party"><option value="">All Parties</option></select>
+        </div>
+        <div class="table-container">
+          <table id="bills-table">
+            <thead><tr><th>Bill No</th><th>Date</th><th>Party</th><th>Net Total</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PAYMENTS -->
+      <section id="payments" class="page hidden">
+        <h1>Payments</h1>
+        <form id="payment-form" class="card" style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end;">
+          <div style="position:relative;">
+            <input type="text" id="payment-party-search" placeholder="Search Party..." autocomplete="off" required>
+            <input type="hidden" id="payment-party" required>
+            <ul id="payment-party-dropdown" class="autocomplete-list"></ul>
+          </div>
+          <input type="number" id="payment-amount" placeholder="Amount Paid" required>
+          <input type="text" id="payment-method" placeholder="Payment Method (e.g., Meezan Bank)" required>
+          <button type="submit" style="height: 100%;">Save Payment</button>
+        </form>
+        <div id="payment-party-balance-display" style="margin-bottom: 20px; font-weight: bold; color: var(--secondary);">
+          <!-- Balance displayed here -->
+        </div>
+        
+        <div class="table-container">
+          <table id="payments-table">
+            <thead><tr><th>Date</th><th>Party</th><th>Amount</th><th>Method</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PARTY LEDGER PAGE -->
+      <section id="party-ledger" class="page hidden">
+        <h1>Party Summary / Ledger</h1>
+        <div class="card" style="margin-bottom: 20px;">
+          <div style="position:relative; display: flex; gap: 10px; align-items: center;">
+            <input type="text" id="ledger-party-search" placeholder="Search Party to view ledger..." autocomplete="off" style="flex:1;">
+            <button type="button" id="ledger-clear-btn" class="danger-btn" style="padding: 8px 14px; font-size: 16px; border-radius: 6px; display:none;" onclick="app.clearLedger()">✕</button>
+            <input type="hidden" id="ledger-party">
+            <ul id="ledger-party-dropdown" class="autocomplete-list"></ul>
+          </div>
+        </div>
+        
+        <div id="ledger-content" class="hidden">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2 id="ledger-party-name">Ledger for ...</h2>
+            <button class="primary action-btn" onclick="app.printLedger()">Print Ledger (A4)</button>
+          </div>
+          
+          <div class="table-container">
+            <table class="data-table" id="ledger-table">
+              <thead>
+                <tr>
+                  <th>DATE</th>
+                  <th>TYPE</th>
+                  <th>REF</th>
+                  <th>DETAILS</th>
+                  <th>DEBIT (Owe Us)</th>
+                  <th>CREDIT (Paid Us)</th>
+                  <th>RUNNING BAL</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      </section>
+
+      <!-- USER MANAGEMENT (Owner Only) -->
+      <section id="user-management" class="page hidden">
+        <h1>User Management</h1>
+        <form id="user-form" class="card">
+          <input type="email" id="new-user-id" placeholder="User Email ID" required>
+          <input type="password" id="new-user-password" placeholder="Password" required>
+          <select id="new-user-role" required>
+            <option value="Operator">Operator</option>
+            <option value="Admin">Admin</option>
+            <option value="Owner">Owner</option>
+          </select>
+          <button type="submit">Create User</button>
+        </form>
+        <div class="table-container">
+          <table id="users-table">
+            <thead><tr><th>User ID</th><th>Role</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+      
+      <!-- INVOICE PRINT VIEW (Hidden from main UI) -->
+      <div id="print-view" class="print-only">
+        <!-- Built dynamically before printing -->
+      </div>
+
+      <!-- EDIT MODAL -->
+      <div id="edit-modal" class="modal-overlay hidden">
+        <div class="modal-content card">
+          <h2 id="edit-modal-title">Edit Entry</h2>
+          <form id="edit-modal-form">
+            <div id="edit-modal-fields" style="display: flex; flex-direction: column; gap: 12px; width: 100%;"></div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; width: 100%;">
+              <button type="button" class="secondary-btn" onclick="app.closeEditModal()">Cancel</button>
+              <button type="submit">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- VIEW BILL MODAL -->
+      <div id="bill-modal" class="modal-overlay hidden">
+        <div class="modal-content card" style="max-width: 800px; width: 90%; background: #ffffff; color: #1a1a1a;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ddd; padding-bottom: 10px; margin-bottom: 20px;">
+            <h2 style="color: #000; margin: 0;">Bill Details</h2>
+            <button type="button" class="danger-btn" onclick="document.getElementById('bill-modal').classList.add('hidden')">Close</button>
+          </div>
+          <div id="bill-modal-content" style="font-family: 'Inter', sans-serif;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+.loader-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.loader-container.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.loader-animation {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 20px;
+}
+
+.box {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 60px;
+  background: #B45309; /* Carton brown */
+  border-radius: 4px;
+  border: 2px solid #78350F;
+}
+
+.box::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -2px;
+  width: 40px;
+  height: 10px;
+  background: #D97706;
+  border: 2px solid #78350F;
+  border-bottom: none;
+  transform-origin: bottom right;
+  animation: flapLeft 1s ease-in-out infinite alternate;
+}
+
+.box::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  right: -2px;
+  width: 40px;
+  height: 10px;
+  background: #D97706;
+  border: 2px solid #78350F;
+  border-bottom: none;
+  transform-origin: bottom left;
+  animation: flapRight 1s ease-in-out infinite alternate;
+}
+
+.garment {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  background: #10B981; /* Garment color */
+  border-radius: 8px 8px 0 0;
+  animation: packGarment 1.5s ease-in-out infinite;
+}
+
+.garment::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 20px;
+  background: #059669;
+  border-radius: 50%;
+}
+
+.loader-text {
+  color: #F8FAFC;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes packGarment {
+  0% { transform: translate(-50%, -40px) scale(1); opacity: 0; }
+  20% { transform: translate(-50%, -20px) scale(1); opacity: 1; }
+  80% { transform: translate(-50%, 40px) scale(0.8); opacity: 1; }
+  100% { transform: translate(-50%, 50px) scale(0); opacity: 0; }
+}
+
+@keyframes flapLeft {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-30deg); }
+}
+
+@keyframes flapRight {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(30deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; text-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+}
